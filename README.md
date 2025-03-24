@@ -30,15 +30,23 @@ In Task 2, we dove headfirst into the fascinating world of UART (Universal Async
   #### 1: UART Transmitter
   Problem Statement
   Design the UART Transmitter (TX) with a parity bit. This UART Transmitter will use the parameters mentioned in Table 1.
+  
   ![image](https://github.com/user-attachments/assets/32ccfb11-682a-4d74-98b1-52b396b9dbbd)
+  
   The UART transmitter takes a 1-bit input tx_start that initiates communication, a 1-bit input parity_type which determines the parity type (0 for even parity, 1 for odd parity), and an 8-bit input data that specifies the character to be transmitted. Based on the 8-bit data input, the module should output the tx signal as a UART data packet (serially) and assert the tx_done signal for one clock cycle to indicate that the UART data packet has been transmitted successfully. The module will have inputs and outputs as mentioned in Table 2.
+  
   ![image](https://github.com/user-attachments/assets/44320da7-984e-4320-931b-0f76b0651bba)
+  
   ![image](https://github.com/user-attachments/assets/a31e93e0-2653-45a9-b89b-8a523f4bfb72)
+  
   #### 2: UART Receiver
   Problem Statement
   Designing UART Receiver (RX) with even parity. This UART Receiver will use the parameters in Table 1.
+  
   ![image](https://github.com/user-attachments/assets/bf2ebb8d-8e38-48b6-8dba-90fcd0c27550)
+  
   The UART receiver will receive the input UART data packet as described in Table 1. Based on the rx input signal, module should output rx_msg after receiving the entire UART data packet, rx_parity for error detection. The rx_complete signal should toggle for 1 clock cycle as well. This module will have inputs and outputs as mentioned in the following table.
+  
   ![image](https://github.com/user-attachments/assets/d68142d7-8282-4873-b9b1-c681586e216e)
 ### B : Path Planner on RISC-V CPU
 Designing Path Planner that can be implemented on designed RISC-V CPU.
