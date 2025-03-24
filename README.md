@@ -28,7 +28,7 @@ To implement the RISC-V CPU in Verilog for rv32i ISA. Complete the RISC-V CPU fr
 In Task 2, we dove headfirst into the fascinating world of UART (Universal Asynchronous Receiver-Transmitter) communication. We designed both the UART transmitter (Tx) and receiver (Rx) modules entirely from scratch using Verilog.
 ### A : Universal Asynchronous Receiver and Transmitter (UART)
   #### 1: UART Transmitter
-  Problem Statement
+  Problem Statement-
   Design the UART Transmitter (TX) with a parity bit. This UART Transmitter will use the parameters mentioned in Table 1.
   
   ![image](https://github.com/user-attachments/assets/32ccfb11-682a-4d74-98b1-52b396b9dbbd)
@@ -40,7 +40,7 @@ In Task 2, we dove headfirst into the fascinating world of UART (Universal Async
   ![image](https://github.com/user-attachments/assets/a31e93e0-2653-45a9-b89b-8a523f4bfb72)
   
   #### 2: UART Receiver
-  Problem Statement
+  Problem Statement-
   Designing UART Receiver (RX) with even parity. This UART Receiver will use the parameters in Table 1.
   
   ![image](https://github.com/user-attachments/assets/bf2ebb8d-8e38-48b6-8dba-90fcd0c27550)
@@ -50,3 +50,14 @@ In Task 2, we dove headfirst into the fascinating world of UART (Universal Async
   ![image](https://github.com/user-attachments/assets/d68142d7-8282-4873-b9b1-c681586e216e)
 ### B : Path Planner on RISC-V CPU
 Designing Path Planner that can be implemented on designed RISC-V CPU.
+  #### 1: Path Planning Algorithm in C
+  Problem Statement-
+  Write an optimized path planning algorithm in the C program to compute a valid path between two points.You are supposed to implement a path planning logic in C that finds valid (necessary) and/or shortest (optional) path between two nodes. Start node and End node will be given as inputs to this C file, and your path planning module should output a path between these two nodes.
+  
+  ![image](https://github.com/user-attachments/assets/1d34a2de-8c5a-4b25-9482-fe4dde9bcd3f)
+  
+  #### 2: RISC-V CPU Execution
+  Problem Statement-
+To execute the optimized Path Planner in C on the designed RISC-V CPU. Execute the path planner on the CPU, at first the start and end points should be read from the data memory to compute a path and write the node points connecting the start and end point in the data memory after computation.
+
+## Task 3:
