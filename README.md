@@ -2,7 +2,7 @@
 
 In the first stage of the competition, there were several tasks designed to help us learn about FPGA, Verilog and CPU architecture. We grasped technical concepts from the resources provided and used them to finish small tasks/assignments.Each task also came with its own problem to solve within a set timeframe.
 
-# Task 0:
+## Task 0:
 The task was broken down into various sub-tasks as followed:
 1.Software Introduction & Installation
 2. Testing Setup
