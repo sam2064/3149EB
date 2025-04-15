@@ -1,0 +1,97 @@
+/*
+# Team ID:          < eYRC##3149>
+# Theme:            < Ecomender bot >
+# Author List:      < Advay Kunte, Samruddhee Jadhav , Pulkit Gupta ,Prabhat Sati >
+# Filename:         < t1b_cd_fd >
+# File Description: < Top level module describing task 1B i.e. Color Detection >
+# Global variables: < None >
+*/
+
+module t1b_cd_fd (                      // Module Declaration
+    input  clk_1MHz, cs_out,            //Inputs : clk_1MHz, cs_out
+    output reg [1:0] filter, color      //Output : filter, color
+);
+
+// red   -> color = 1;
+// green -> color = 2;
+// blue  -> color = 3;
+
+//////////////////DO NOT MAKE ANY CHANGES ABOVE THIS LINE //////////////////
+reg [4:0] max_freq;		// < max_freq >: < to keep record of maximum frequency of cs _out during green filter for half cycle since frequency is same for all the cycles>
+reg check; 					// <check > : keep record of highest filter frequency in initial comparison
+
+initial begin // editing this initial block is allowed
+    filter = 3; color = 0;
+end
+reg [8:0] counter = 0;		// < counter >: < to record number of cycles(frequency) of clk_1MHz >
+reg [4:0] k = 0;				// < k >: < to record number of cycles(frequency) of cs_out >
+
+always @(posedge cs_out) begin 
+/*
+Purpose:
+< to keep a count of the frequency of the input signal i.e. cs_out >
+*/
+
+		if (counter ==20 && (clk_1MHz==1))
+			k = k+1;
+		if(counter==0 || (counter==1&&filter==3))
+			k = 0;
+end
+
+
+always @(posedge clk_1MHz ) begin
+/*
+Purpose:
+< to execute FSM where filter changes based on 'counter' and filter and hence the frequency values are sequentially obtained>
+*/
+counter = counter + 1;
+	if (counter == 501 && filter == 3)	begin
+		filter = 0;
+		max_freq = k;
+		check = 0;
+		counter = 0;
+		end
+	else if ( counter ==500 && filter == 0) begin
+		filter = 1;
+		if(max_freq<11)
+		check = 0;
+		else if ( k > max_freq) begin
+			check = 1;
+			max_freq = k;
+		end
+		counter =0 ;
+		end
+	else if( counter == 500 && filter == 1)begin
+		filter = 2;
+		if(max_freq<11&&k<11)
+		begin
+		if(max_freq>k)
+		color = 2;
+		else
+		color = 3;
+		end
+		else if(k<11&&max_freq>11)
+		color = 3;
+		else if(k>11&&max_freq<11)
+		color = 2;
+		else if (max_freq > k) begin		// Comparison of frequencies to determine the detected color
+			if(check)
+					color = 1;
+			else color = 2;
+			end
+		else begin
+				color = 3;
+		end
+		end
+	else if (filter==2)				//Reseting to initial state
+		begin
+		filter = 3;
+		counter=1;		
+		end
+	
+
+end
+
+//////////////////DO NOT MAKE ANY CHANGES BELOW THIS LINE //////////////////
+
+endmodule
