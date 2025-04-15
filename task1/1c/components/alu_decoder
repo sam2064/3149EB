@@ -1,0 +1,69 @@
+
+// alu_decoder.v - logic for ALU decoder
+
+module alu_decoder (
+	input [6:0] op,
+    input            opb5,
+	 input            opb4,
+    input [2:0]      funct3,
+    input            funct7b5,
+    input [1:0]      ALUOp,
+    output reg [3:0] ALUControl  //size of ALU Control was changed from 3 to 4 bit to accomodate more basic functions in the alu
+											
+);
+
+always @(*) begin
+	/*
+Purpose:
+---
+< Based on the ALUOp, the decoder is separating controls neccesary for 
+execution of various ALU instructions by assigning value to ALUControl signal >
+*/
+    case (ALUOp)
+        2'b00: ALUControl = 4'b0000;             // addition
+        2'b01: case(op)
+					7'b0110011:
+					ALUControl = 4'b0001;             // subtraction, branch
+					default:
+					case(funct3)
+					3'b000: ALUControl = 4'b1010;		//beq
+					3'b001: ALUControl = 4'b1011;		//bne
+					3'b100: ALUControl = 4'b1100;		//blt
+					3'b101: ALUControl = 4'b1101;		//bge
+					3'b110: ALUControl = 4'b1110;		//bltu
+					3'b111: ALUControl = 4'b1111;		//bgeu
+					default: ALUControl = 4'bx;	//undefined
+					endcase
+				endcase
+		  2'b10: begin										// Checking for i type 
+					case(funct3) //Checking for different functions of i type
+						3'b000: begin
+                    // True for R-type subtract
+                    if   (funct7b5 & opb5) ALUControl = 4'b0001; //sub
+                    else ALUControl = 4'b0000; // add, addi
+						end
+						3'b010:ALUControl=4'b0101;   // slt, slti   working in default not here
+						3'b001:ALUControl=4'b0100;     //slli,sll  //control signal set by us // check later if given already in table
+						3'b100:ALUControl=4'b0110;     //xori,xor
+						3'b011:ALUControl=4'b1001;     //sltu,sltiu
+						3'b111:ALUControl=4'b0010;    //andi , and
+						3'b110:ALUControl=4'b0011;    //ori, or
+					    
+						3'b101: begin
+						case(funct7b5 & opb4)
+						1'b0:ALUControl=4'b0111;   //srli,srl
+						1'b1:ALUControl=4'b1000;   //srai,sra
+						default:ALUControl=4'bxxxx;
+						endcase
+						end
+					endcase
+		  
+		  end
+        default:
+            ALUControl = 4'bxxxx; // No Match
+        endcase
+			
+end
+
+endmodule
+
