@@ -1,0 +1,91 @@
+// EcoMender Bot : Task 2A - UART Receiver
+
+/*
+Module UART Receiver
+
+Baudrate: 230400 
+
+Input:  clk_3125 - 3125 KHz clock
+        rx      - UART Receiver
+
+Output: rx_msg - received input message of 8-bit width
+        rx_parity - received parity bit
+        rx_complete - successful uart packet processed signal
+*/
+
+// module declaration
+module uart_rx(
+    input clk_3125,
+    input rx,
+    output reg [7:0] rx_msg,
+    output reg rx_parity,
+    output reg rx_complete
+    );
+
+//////////////////DO NOT MAKE ANY CHANGES ABOVE THIS LINE//////////////////
+reg [7:0] counter;
+reg [7:0] temp;
+reg [3:0] k;
+reg part_temp;
+initial begin
+    rx_msg = 0;
+	  rx_parity = 0;
+    rx_complete = 0;
+	 counter =0;
+	 k=0;
+end
+
+
+always @( posedge clk_3125 ) begin
+	counter <= counter +1;
+	
+	case (counter)
+	8'd21: begin temp[7]<= rx;
+			if (rx ==1)	k<=k+1;	
+			end
+	8'd35: begin temp[6]<= rx;
+			if (rx ==1)	k<=k+1;	
+			end
+	8'd49: begin temp[5]<= rx;
+			if (rx ==1)	k<=k+1;	
+			end
+	8'd63: begin temp[4]<= rx;
+			if (rx ==1)	k<=k+1;	
+			end
+	8'd77: begin temp[3]<= rx;
+			if (rx ==1)	k<=k+1;	
+			end
+	8'd91: begin temp[2]<= rx;
+			if (rx ==1)	k<=k+1;	
+			end
+	8'd105: begin temp[1]<= rx;
+			if (rx ==1)	k<=k+1;	
+			end
+	8'd119: begin temp[0]<= rx;
+			if (rx ==1)	k<=k+1;	
+			end
+	8'd133: part_temp<= rx;
+	8'd154: begin
+	//rx_msg <= temp;
+	if ((k%2 == 0) & (part_temp ==0)) rx_msg <= temp;
+	else if ((k%2 != 0) & (part_temp ==1)) rx_msg <= temp;
+	else rx_msg = 8'b00111111 ;
+	rx_complete <=1'b1;
+	rx_parity <= part_temp;
+	counter <=1;
+	k<=0;
+	end
+	default:rx_complete <=1'b0 ;
+	
+	
+	endcase
+	
+	
+end
+
+
+//////////////////DO NOT MAKE ANY CHANGES BELOW THIS LINE//////////////////
+
+
+endmodule
+
