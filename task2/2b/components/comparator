@@ -1,0 +1,10 @@
+module comparator #(parameter WIDTH = 32) (
+    input       [WIDTH-1:0] a, b,       // operands
+    output      lessthan,     // lessthan
+    output      equalto     // equalto
+);
+
+assign lessthan = (a<b);
+assign equalto = (a==b);
+
+endmodule
