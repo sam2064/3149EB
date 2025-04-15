@@ -1,0 +1,64 @@
+
+module alu #(parameter WIDTH = 32) (
+    input       [WIDTH-1:0] a, b,       // operands
+    input       [3:0] alu_ctrl,         // ALU control
+    output  wire    [WIDTH-1:0] alu_out,    // ALU output
+    output  wire   zero                    // zero flag
+);
+
+
+wire [WIDTH-1:0] ca, cb;
+wire alb,aeb,agb;
+wire csig;
+assign csig = ((alu_ctrl[1]&alu_ctrl[0])|(alu_ctrl[3]&alu_ctrl[1])|(alu_ctrl[3]&(~alu_ctrl[1])));
+assign ca = csig?$signed(a):a;
+assign cb = csig?$signed(b):b;
+comparator c1(ca,cb,alb,aeb);
+assign agb = ~alb;
+
+wire SLT, SLTU, BEQ, BNE, BLT , BGE , BLTU , BGEU ;
+assign SLT = alb;
+assign SLTU = alb;
+assign BEQ = aeb;
+assign BNE = ~aeb;
+assign BLT = alb;
+assign BGE = agb;
+assign BLTU = alb;
+assign BGEU = agb;
+
+wire [31:0] ab;
+wire  cout;
+add_sub a1(a,b,alu_ctrl[3],ab,cout);
+
+
+   
+    // Continuous assignments for ALU operations
+    assign alu_out = (alu_ctrl == 4'b0000) ? ab :                // ADD
+                     (alu_ctrl == 4'b0001) ? (a << b[4:0]) :    // Shift left logical
+                     (alu_ctrl == 4'b0010) ? SLT :               // SLT signed
+                     (alu_ctrl == 4'b0011) ? SLTU :              // SLT unsigned
+                     (alu_ctrl == 4'b0100) ? (a ^ b) :           // XOR
+                     (alu_ctrl == 4'b0101) ? (a >> b[4:0]) :    // Shift right logical
+                     (alu_ctrl == 4'b0110) ? (a | b) :           // OR
+                     (alu_ctrl == 4'b0111) ? (a & b) :           // AND
+                     (alu_ctrl == 4'b1010) ? ab :                // SUB
+                     (alu_ctrl == 4'b1011) ? ($signed(a) >>> b[4:0]) : // Shift right arithmetic
+                     0;  // Default to 0 if no valid control signal
+
+    // Continuous assignment for zero flag
+    assign zero = (alu_ctrl == 4'b1000) ? BEQ :                 // BEQ
+                  (alu_ctrl == 4'b1001) ? BNE :                 // BNE
+                  (alu_ctrl == 4'b1100) ? BLT :                 // BLT
+                  (alu_ctrl == 4'b1101) ? BGE :                 // BGE
+                  (alu_ctrl == 4'b1110) ? BLTU :                // BLTU
+                  (alu_ctrl == 4'b1111) ? BGEU :                // BGEU
+                  0;  // Default to 0 for zero flag if no valid control signal
+                  
+
+
+
+endmodule
+
+
+
+
