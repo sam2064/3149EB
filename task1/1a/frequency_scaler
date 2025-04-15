@@ -1,0 +1,41 @@
+//Frequency Scaling
+//Inputs : clk_50MHz
+//Output : clk_1MHz
+
+
+module frequency_scaler (
+    input clk_50MHz,
+    output reg clk_1MHz
+);
+
+initial begin
+    clk_1MHz = 1;
+end
+
+//////////////////DO NOT MAKE ANY CHANGES ABOVE THIS LINE //////////////////
+reg [4:0]counter = 0;  				// counter : counting the positive edges of input clock per bit flip of output
+always @ (posedge clk_50MHz)
+
+ /*
+Purpose:
+Sets the two counter such that one of them is responsible for frequency for 
+output clock signal by flipping the output bit on every n positive edges, thereby modulating
+it n times..
+	*/
+
+  begin
+  if (counter == 25)
+		begin
+		clk_1MHz = ~(clk_1MHz) ;
+		counter = 1;
+		end
+  else 
+		begin 
+		counter = counter + 1;
+		end
+  end
+
+
+//////////////////DO NOT MAKE ANY CHANGES BELOW THIS LINE //////////////////
+
+endmodule
