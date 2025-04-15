@@ -1,0 +1,78 @@
+// EcoMender Bot : Task 1A : PWM Generator
+/*
+Instructions
+-------------------
+Students are not allowed to make any changes in the Module declaration.
+This file is used to design a module which will scale down the 1MHz Clock Frequency to 500Hz and perform Pulse Width Modulation on it.
+
+Recommended Quartus Version : 20.1
+The submitted project file must be 20.1 compatible as the evaluation will be done on Quartus Prime Lite 20.1.
+
+Warning: The error due to compatibility will not be entertained.
+-------------------
+*/
+
+//PWM Generator
+//Inputs : clk_1MHz, pulse_width
+//Output : clk_500Hz, pwm_signal
+
+/*
+# Team ID:           eYRC##3149
+# Theme:            EcoMEnder Bot
+# Author List:      Advay Kunte, Samruddhee Jadhav , Prabhat Sati ,
+# Filename:          pwm_generator.v
+# File Description: Verilog code file that modulates the input frequency and generates PWM based
+							on pulse width and input clock cycle
+# Global variables: < List of global variables defined in this file, None if no global variables >
+*/
+
+
+module pwm_generator(
+    input clk_1MHz,
+    input [3:0] pulse_width,
+    output reg clk_500Hz, pwm_signal
+);
+
+initial begin
+    clk_500Hz = 1; pwm_signal = 1;
+end
+
+//////////////////DO NOT MAKE ANY CHANGES ABOVE THIS LINE//////////////////
+
+	 reg [10:0]counter = 0;	//	counter : counting the clock cycles responsible for high signal in pwm and alternating clk depending on frequency ratio
+    always @ (posedge clk_1MHz) begin
+	 
+	 /*
+Purpose:
+Sets the counter such that it is responsible for frequency for 
+output clock signal by flipping the output bit on every n positive edges, thereby modulating
+it n times and it increments itself till it reaches the pulsewidth , for which
+duration the pwm signal is 1 and for rest of time period it is 0.
+	*/
+
+		  counter <= counter+ 1;
+		  if ((pulse_width)*100 == 1000)
+				begin
+				pwm_signal <= 0;
+			   clk_500Hz <= ~(clk_500Hz) ;
+				end
+        else if (counter == 1000)
+            begin 
+            clk_500Hz <= ~(clk_500Hz) ;
+				end
+		  else if (counter == 100*(pulse_width))
+				begin
+				pwm_signal <= 0;
+				end
+		  else if (counter == 2000)
+				begin
+				pwm_signal <=  1;
+				counter <= 1;
+				clk_500Hz <= ~(clk_500Hz);
+				end
+			end
+			
+
+//////////////////DO NOT MAKE ANY CHANGES BELOW THIS LINE//////////////////
+
+endmodule
