@@ -1,0 +1,68 @@
+
+// alu.v - ALU module
+
+module alu #(parameter WIDTH = 32) (
+    input       [WIDTH-1:0] a, b,       // operands
+    input       [3:0] alu_ctrl,         // ALU control
+    output reg  [WIDTH-1:0] alu_out,    // ALU output
+    output   reg   zero                    // zero flag
+);
+
+	reg [4:0]btemp; // temporary variable to get uimm.
+
+always @(a, b, alu_ctrl) begin
+/*
+Purpose:
+---
+< Based on the alu_ctrl signal and inputs, output generated based on the instruction necessary>
+*/
+    case (alu_ctrl)
+        4'b0000:  alu_out <= a + b;       // ADD
+        4'b0001:  alu_out <= a + ~b + 1;  // SUB
+        4'b0010:  alu_out <= a & b;       // AND
+        4'b0011:  alu_out <= a | b;       // OR
+        4'b0101:  begin                   // SLT signed
+                     if (a[31] != b[31]) alu_out <= a[31] ? 1 : 0;
+                     else alu_out <= a < b ? 1 : 0;
+                 end
+		  4'b0100: alu_out <= a<<b;        // shift left
+		  4'b0110: alu_out<= a^b;          // xor
+		  4'b0111: alu_out<= a>>b;         //shift logical right
+		  4'b1000: begin
+						btemp=b[4:0];
+						alu_out= $signed(a) >>> btemp; 
+						end
+														// shift arithmetic right
+		  4'b1001:  begin                   // SLT unsigned
+                     if (a[31] != b[31]) alu_out <= a[31] ? 0: 1;
+                     else alu_out <= a < b ? 1 : 0;
+                 end
+			4'b1010:  zero <= (a==b) ? 1'b1 : 1'b0; //beq
+			4'b1011:  zero <= (a!=b) ? 1'b1 : 1'b0; //bne
+			4'b1100: begin                   
+                     if (a[31] != b[31]) zero <= a[31] ? 1 : 0; //blt
+                     else zero <= a < b ? 1 : 0;
+                 end
+			4'b1101: 
+			begin                   
+                     if (a == b) zero <=  1;
+							else if(a[31] != b[31])  zero <= a[31] ? 0 : 1; //bge
+                     else zero = a > b ? 1: 0;
+						end
+			4'b1110:  zero <= (a<b) ? 1'b1 : 1'b0; //bltu
+			4'b1111:  zero <= (a>=b) ? 1'b1 : 1'b0; //bgeu
+			 
+		  
+        default: alu_out = 0;
+    endcase
+end
+
+
+
+
+
+
+
+endmodule
+
+
