@@ -2,9 +2,10 @@
 
 In the first stage of the competition, there were several tasks designed to help us learn about FPGA, Verilog and CPU architecture. We grasped technical concepts from the resources provided and used them to finish small tasks/assignments.Each task also came with its own problem to solve within a set timeframe.
 
+## Stage 1 =>
 ## Task 0:
 The task was broken down into various sub-tasks as followed:
-1.Software Introduction & Installation
+1. Software Introduction & Installation
 2. Testing Setup
 3. Verilog Design Implementation
 4. Basics of CPU Architecture
@@ -58,6 +59,42 @@ Designing Path Planner that can be implemented on designed RISC-V CPU.
   
   #### 2: RISC-V CPU Execution
   Problem Statement-
-To execute the optimized Path Planner in C on the designed RISC-V CPU. Execute the path planner on the CPU, at first the start and end points should be read from the data memory to compute a path and write the node points connecting the start and end point in the data memory after computation.
+  To execute the optimized Path Planner in C on the designed RISC-V CPU.At first the start and end points should be read from the data memory to compute a path and write the node points connecting the start and end point in the data memory after computation.
+
+## Stage 2 =>
+In this stage of the competition, teams are going to apply the knowledge gained so far in Verilog and FPGA into the actual hardware in a systematic way. This time you will be challenged with your creativity, problem solving and time-management skills.
+### Hardware Testing
+All teams were provided with the following set of components in their hardware kits
+![image](https://github.com/user-attachments/assets/80477895-2cef-45cc-bc3d-b18c106675b0)
 
 ## Task 3:
+
+### A : Arena Printing
+
+### B : Bot building
+Teams need to the design the robot using the components provided in the hardware kit. The robot dimensions should NOT exceed L = 12 cm, B = 12 cm and H = 20 cm. Apart from the color sensor and gripper assembly, NO other component should be outside a cube of the above dimensions.
+  Front view ![front_view](https://github.com/user-attachments/assets/b5166cb2-0e8d-4008-b1b9-5e8f738bafaf) 
+Side view ![side_view](https://github.com/user-attachments/assets/aa080447-3070-45bb-8699-7f7a4222cb2d) 
+Top view ![top_view](https://github.com/user-attachments/assets/489b2ebb-3564-47a2-9cfc-8e2ee6e54ac4) 
+
+### C : Pipelined RISC-V CPU
+  Problem Statement-
+  To implement pipelined RISC-V CPU by extending the implemented single-cycle cpu.Teams need to update the single-cycle RISC-V CPU from task 2B CPU design to implement pipelined RISC-V CPU.
+
+## Task 4:
+  In this task, EcoMender Bot (EB) built in the previous task should traverse around Fabrication Unit (FU) by following the black line along with node, color detection and wireless communication using Bluetooth Module.
+  ![image](https://github.com/user-attachments/assets/5a244204-6e05-48f9-8bfc-3129302af916)
+
+  This task can be divided into 3 sub-tasks and then all the sub-tasks can be merged to complete the Task 4. The sub-tasks are as below:
+1. Black Line Following
+2. Color Detection
+3. UART Transmission
+
+##### Procedure
+1. Place the EB in the Fabrication Unit (FU) as shown in the arena preparation image.
+2. Power on the EB. EB should NOT start its traversal unless bluetooth module (HC-05) is connected with the Serial Bluetooth Terminal application.
+3. During the traversal in the FU, EB should identify the Nodes and SI(sustainability levels- These are the color patches placed along the path close to a node in the different units indicating the sustainability level of the subunit) in the industry.
+4. For indicating the sustainability level, the EB should glow detected color on one of the three LEDs for this task till it completes one lap. At the same time, EB should also send the Sustainability Level Message (SLM) as described in the RuleBook.
+5. EB needs to complete Two laps/rounds from the start position within three minutes and reach the start point again (i.e., Node 10 or Node 11) in the last lap/round.
+6. To indicate END of the run, EB should stop at the start point (Node 10 or Node 11) after two laps/rounds and then blink GREEN color light in all the three LEDs with 1 sec delay.
+   Link to submission video- [https://www.youtube.com/watch?v=vwbD8K8ESXU](https://youtu.be/vwbD8K8ESXU?si=A-Ru0NLuokE1NXMv)
