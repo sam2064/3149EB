@@ -1,0 +1,40 @@
+// pipeline registers -> memory | writeback  stage
+
+module memory_writeback_latch (
+    input             clk,RegwriteM,
+    input      [1:0]  ResultSrcM,
+	 input      [31:0] ALUResultM,ReadDataM,PCPlus4M,PCM,WriteDataM,
+	 input      [4:0]  RdM,
+    output reg RegWriteW,
+	 output reg [1:0] ResultSrcW,
+	 output reg [31:0] ALUResultW,ReadDataW,PCPlus4W,PCW,WriteDataW,
+	 output reg [4:0]  RdW,
+	 input   [31:0]lauipcM,
+	 output reg [31:0] lauipcW 
+);
+
+initial begin
+     RegWriteW<= 0;
+	  ResultSrcW <= 0;
+//	  ALUControlW <= 0;
+	  ALUResultW <= 0;
+	  ReadDataW <= 0;
+	  PCPlus4W <= 0;
+	  RdW <= 0;
+	  lauipcW<=0;
+	  PCW <= 0;
+	  WriteDataW <= 0;
+end
+
+always @(posedge clk) begin
+	  RegWriteW <= RegwriteM;
+	  ResultSrcW <= ResultSrcM;
+	  ALUResultW <= ALUResultM;
+	  ReadDataW <= ReadDataM;
+	  PCPlus4W <= PCPlus4M;
+	  RdW <= RdM;
+	  lauipcW<=lauipcM;
+	  PCW <= PCM;
+	  WriteDataW <= WriteDataM;
+	 end 
+endmodule

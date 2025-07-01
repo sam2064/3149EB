@@ -1,0 +1,24 @@
+// alu_decoder.v - logic for ALU decoder
+
+module alu_decoder (
+	input [6:0] op,
+    input            opb5,
+	 input            opb4,
+    input [2:0]      funct3,
+    input            funct7b5,
+    input [1:0]      ALUOp,
+    output wire [3:0] ALUControl  //size of ALU Control was changed from 3 to 4 bit to accomodate more basic functions in the alu
+											
+);
+
+assign ALUControl = (ALUOp === 2'bxx) ? 4'b0000 :  // Handle undefined ALUOp first
+             (ALUOp == 2'b10 && funct3 == 3'b000 && (funct7b5&opb5)) ? 4'b1010 : // Case with same funct3 value assigned different ALUControl value
+             (ALUOp == 2'b10 && funct3 == 3'b101 && (funct7b5&opb4)) ? 4'b1011 : // Case with same funct3 value assigned different ALUControl value
+             {ALUOp[0], funct3};  // Default case
+endmodule
+
+
+
+
+
+
