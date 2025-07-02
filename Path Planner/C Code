@@ -1,0 +1,163 @@
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <limits.h>
+#define V 32
+    #define START_POINT         (* (volatile uint8_t * ) 0x02000000)
+        #define END_POINT           (* (volatile uint8_t * ) 0x02000004)
+        #define NODE_POINT          (* (volatile uint8_t * ) 0x02000008)
+        #define CPU_DONE            (* (volatile uint8_t * ) 0x0200000c)
+
+// #ifdef linux // for host pc
+
+//     #include <stdio.h>
+
+//     void _put_byte(char c) { putchar(c); }
+
+//     void _put_str(char *str) {
+//         while (*str) {
+//             _put_byte(*str++);
+//         }
+//     }
+
+//     void print_output(uint8_t num) {
+//         if (num == 0) {
+//             putchar('0'); // if the number is 0, directly print '0'
+//             _put_byte('\n');
+//             return;
+//         }
+
+//         if (num < 0) {
+//             putchar('-'); // print the negative sign for negative numbers
+//             num = -num;   // make the number positive for easier processing
+//         }
+
+//         char buffer[20];
+//         uint8_t index = 0;
+
+//         while (num > 0) {
+//             buffer[index++] = '0' + num % 10;
+//             num /= 10;
+//         }
+
+//         while (index > 0) { putchar(buffer[--index]); }
+//         _put_byte('\n');
+//     }
+
+//     void _put_value(uint8_t val) { print_output(val); }
+
+// #else
+
+//     void _put_value(uint8_t val) { }
+//     void _put_str(char *str) { }
+
+// #endif
+
+int main(int argc, char const *argv[]) {
+
+    // #ifdef linux
+
+    //     const uint8_t START_POINT   = atoi(argv[1]);
+    //     const uint8_t END_POINT     = atoi(argv[2]);
+    //     uint8_t NODE_POINT          = 0;
+    //     uint8_t CPU_DONE            = 0;
+
+    // #else
+    
+    // #endif
+
+    uint32_t *neighbors = {(uint32_t)0x02000010};  //<neighbors>: adjacency matrix that records immediate neighbors of the nodes
+
+    neighbors[0] = 0b00000000000000000000010001000010; // Node 0: 1, 10, 6
+    neighbors[1] = 0b00000000000000000000100000000101; // Node 1: 0, 11, 2
+    neighbors[2] = 0b00000000000000000000000000111010; // Node 2: 1, 3, 4, 5
+    neighbors[3] = 0b00000000000000000000000000000100; // Node 3: 2
+    neighbors[4] = 0b00000000000000000000000000000100; // Node 4: 2
+    neighbors[5] = 0b00000000000000000000000000000100; // Node 5: 2
+    neighbors[6] = 0b00000000000000000000001110000001; // Node 6: 0, 7, 8, 9
+    neighbors[7] = 0b00000000000000000000000001000000; // Node 7: 6
+    neighbors[8] = 0b00000000000000000000000001000000; // Node 8: 6
+    neighbors[9] = 0b00000000000000000000000001000000; // Node 9: 6
+    neighbors[10] = 0b00000101000000000000100000000001; // Node 10: 0, 11, 24, 26
+    neighbors[11] = 0b00000000000010000001010000000010; // Node 11: 1, 10, 12, 19
+    neighbors[12] = 0b00000000000000000110100000000000; // Node 12: 11, 13, 14
+    neighbors[13] = 0b00000000000000000001000000000000; // Node 13: 12
+    neighbors[14] = 0b00000000000000011001000000000000; // Node 14: 12, 15, 16
+    neighbors[15] = 0b00000000000000000100000000000000; // Node 15: 14
+    neighbors[16] = 0b00000000000001100100000000000000; // Node 16: 14, 17, 18
+    neighbors[17] = 0b00000000000000010000000000000000; // Node 17: 16
+    neighbors[18] = 0b00000000001010010000000000000000; // Node 18: 16, 21
+    neighbors[19] = 0b00000000000101000000100000000000; // Node 19: 18, 20, 11
+    neighbors[20] = 0b00000000000010000000000000000000; // Node 20: 19
+    neighbors[21] = 0b00000000110001000000000000000000; // Node 21: 18, 22, 23
+    neighbors[22] = 0b00000000001000000000000000000000; // Node 22: 21
+    neighbors[23] = 0b01000001001000000000000000000000; // Node 23: 21, 24, 30
+    neighbors[24] = 0b00000010100000000000010000000000; // Node 24: 10,23,25
+    neighbors[25] = 0b00000001000000000000000000000000; // Node 25: 24
+    neighbors[26] = 0b00110000000000000000010000000000; // Node 26: 10,27,28
+    neighbors[27] = 0b00000100000000000000000000000010; // Node 27: 26
+    neighbors[28] = 0b01100100000000000000000000000000; // Node 28: 26, 29, 30
+    neighbors[29] = 0b00010000000000000000000000000000; // Node 29: 28
+    neighbors[30] = 0b10010000100000000000000000000000; // Node 30: 23, 28, 31
+    neighbors[31] = 0b01000000000000000000000000000000; // Node 31: 30
+
+uint8_t *path_planned = {(uint8_t)0x02000090}; //1d array recording the path taken by the algorithm
+uint8_t *dist_matrix = {(uint8_t)0x020000b4}; //1d array recording the distance of each node from the end node
+uint8_t *predecessor = {(uint8_t)0x02000d4}; //1d array recording the predecessor of the node in question
+uint32_t nodes_done = 0; //measure to check if given node has been examined for distance, predecessor, path .
+ for(int i =0;i<32;i++)
+ {
+     dist_matrix[i] = 32; //setting the distances to infinity
+     if(i==END_POINT)
+     dist_matrix[END_POINT] = 0; //setting distance of end point to zero
+ }
+
+       uint8_t idx = END_POINT; //variable refering to end point
+
+    while (nodes_done != 0xffffffff)
+    {
+            nodes_done = (0b00000000000000000000000000000001<<idx)|nodes_done ;             //Node now visited
+            for(int i=0; i<32;i++){
+                if(((neighbors[idx]>>i)&1)==1 && dist_matrix[i]>(dist_matrix[idx]+1)) {     //Updating distance matrix w.r.t to dist_matrix
+                        dist_matrix[i] = dist_matrix[idx]+1;
+                        predecessor[i] = idx;
+                        
+                    }
+            }
+
+            for(int i =0 ; i<32 ; i++){
+                if(((nodes_done>>i)&1)==0){
+                    idx = i;
+                    break;
+                }
+            }
+            for(int i=0 ; i< 32 ; i++){
+                if(dist_matrix[i]<dist_matrix[idx] && ((nodes_done>>i)&1)==0){
+                        idx = i;
+                    }
+                }
+
+        }
+
+    idx =0; //resetting index
+
+    for (int node = START_POINT; node != END_POINT; node = predecessor[node]) {
+            path_planned[idx] = node; 
+            NODE_POINT=node;
+            (idx) = (idx) + 1;
+        }
+
+        NODE_POINT = END_POINT; // Add the start point at the end of the path
+
+    CPU_DONE = 1; // Indicate completion of CPU processing
+
+    #ifdef linux
+        _put_str("######### Planned Path #########\n");
+        for (int i = 0; i < idx; ++i) {
+            _put_value(path_planned[i]); // Print each node in the planned path
+        }
+        _put_str("################################\n");
+    #endif
+
+    return 0;
+}
