@@ -1,0 +1,98 @@
+// EcoMender Bot : Task 2A - UART Transmitter
+
+/*
+Module UART Transmitter
+
+Input:  clk_3125 - 3125 KHz clock
+        parity_type - even(0)/odd(1) parity type
+        tx_start - signal to start the communication.
+        data    - 8-bit data line to transmit
+
+Output: tx      - UART Transmission Line
+        tx_done - message transmitted flag
+*/
+
+// module declaration
+module uart_tx(
+    input clk_3125,
+    input parity_type,tx_start,
+    input [7:0] data,
+    output reg tx, tx_done
+);
+
+//////////////////DO NOT MAKE ANY CHANGES ABOVE THIS LINE//////////////////
+wire parity_bit ;
+wire data_xor ;
+assign data_xor = ^data;
+assign parity_bit = (parity_type?(data_xor?0:1):(data_xor?1:0));
+
+initial begin
+    tx = 1;
+    tx_done = 0;
+end
+
+reg [2:0] counter =3'b00 ;
+reg [3:0] c = 0;
+reg [4:0] c1 =0;
+
+always @ (posedge clk_3125) begin
+	if(tx_start)
+		counter = 3'b00;		
+	case(counter)
+		3'b000:	begin
+					tx = 0;
+					if (c1 ==26)	begin
+						counter =  counter + 1;
+						c1 = 0;
+						end
+					else 
+						c1 = c1+1;
+						
+		end
+		3'b001:	begin
+					tx = data[7-c] ;
+					if (c1 == 26) begin
+						c = c+ 1;
+						c1 = 0;
+					end
+					else 
+						c1 = c1+1;
+					if (c==8)begin
+						counter = counter + 1;
+						c = 0;
+					end
+		end
+		3'b010:	begin
+					tx = parity_bit;
+					if (c1 ==26)	begin
+						counter =  counter + 1;
+						c1 = 0;
+						end
+					else 
+						c1 = c1+1;
+					
+		end
+		3'b011:	begin
+					tx = 1;
+					if (c1 ==26)	begin
+						counter =  counter + 1;
+						tx_done = 1;
+						c1 = 0;
+						end
+					else 
+						c1 = c1+1;
+		end
+		default:	begin
+					tx = 1;
+					tx_done = 0;
+					
+		end
+
+	endcase
+end
+	
+
+
+//////////////////DO NOT MAKE ANY CHANGES BELOW THIS LINE//////////////////
+
+endmodule
